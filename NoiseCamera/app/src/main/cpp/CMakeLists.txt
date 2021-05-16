@@ -5,7 +5,7 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
-set(pathPROJECT /Users/bangjinhyuk/AndroidStudioProjects/NoiseCamera) # 수정필요
+set(pathPROJECT /Users/bangjinhyuk/Documents/개발/Git/NoiseCamera/NoiseCamera) # 수정필요
 set(pathOPENCV ${pathPROJECT}/sdk) # 수정 필요
 set(pathLIBOPENCV_JAVA ${pathOPENCV}/native/libs/${ANDROID_ABI}/libopencv_java4.so)
 

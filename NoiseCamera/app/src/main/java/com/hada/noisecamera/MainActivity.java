@@ -127,17 +127,21 @@ public class MainActivity extends AppCompatActivity {
             options.inSampleSize = 1;
             Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
             iv_result.setImageBitmap(bitmap);
-            //비트맵 =>
-//            try {
-//                getWriteLock();
-//                Utils.bitmapToMat(bitmap, matInput);
-//                if (matResult == null)
-//                    matResult = new Mat(matInput.rows(), matInput.cols(), matInput.type());
-//                releaseWriteLock();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            saveImage();
+            try {
+                getWriteLock();
+                matInput = new Mat();
+                Utils.bitmapToMat(bitmap, matInput);
+                if (matResult == null)
+                    matResult = new Mat(matInput.rows(), matInput.cols(), matInput.type());
+                releaseWriteLock();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            saveImage();
+//            iv_result.setImageMatrix(matResult);
+            saveImage1();
+            saveImage2();
+
         }
     }
     public void saveImage() {
@@ -147,12 +151,10 @@ public class MainActivity extends AppCompatActivity {
             File path = new File(Environment.getExternalStorageDirectory() + "/Images/");
             path.mkdirs();
             File file = new File(path, "image.jpg");
-            File file_2 = new File(path, "image1.jpg");
-            File file_3 = new File(path, "image2.jpg");
+
 
             String filename = file.toString();
-            String filename1 = file_2.toString();
-            String filename2 = file_3.toString();
+
 
             Log.d("file", filename + path);
             ConvertRGBtoGray(matInput.getNativeObjAddr(), matResult.getNativeObjAddr());
@@ -160,13 +162,6 @@ public class MainActivity extends AppCompatActivity {
             boolean ret  = Imgcodecs.imwrite( filename, matResult);
             ConvertNoise(matResult.getNativeObjAddr(),matResult.getNativeObjAddr(),5);
             if ( ret ) Log.d(TAG, "SUCESS0"+filename);
-            else Log.d(TAG, "FAIL");
-            boolean ret1  = Imgcodecs.imwrite( filename1, matResult);
-            ConvertNoise(matResult.getNativeObjAddr(),matResult.getNativeObjAddr(),10);
-            if ( ret1 ) Log.d(TAG, "SUCESS1"+filename1);
-            else Log.d(TAG, "FAIL");
-            boolean ret2  = Imgcodecs.imwrite( filename2, matResult);
-            if ( ret2 ) Log.d(TAG, "SUCESS2"+filename2);
             else Log.d(TAG, "FAIL");
 
 
@@ -180,7 +175,69 @@ public class MainActivity extends AppCompatActivity {
 
         releaseWriteLock();
     }
+    public void saveImage1() {
+        try {
+            getWriteLock();
 
+            File path = new File(Environment.getExternalStorageDirectory() + "/Images/");
+            path.mkdirs();
+
+            File file_2 = new File(path, "image1.jpg");
+
+
+            String filename1 = file_2.toString();
+
+
+            ConvertRGBtoGray(matInput.getNativeObjAddr(), matResult.getNativeObjAddr());
+            Imgproc.cvtColor(matResult, matResult, Imgproc.COLOR_BGR2RGBA);
+            ConvertNoise(matResult.getNativeObjAddr(),matResult.getNativeObjAddr(),5);
+            boolean ret1  = Imgcodecs.imwrite( filename1, matResult);
+            if ( ret1 ) Log.d(TAG, "SUCESS1"+filename1);
+            else Log.d(TAG, "FAIL");
+
+
+
+            Intent mediaScanIntent = new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            mediaScanIntent.setData(Uri.fromFile(file_2));
+            sendBroadcast(mediaScanIntent);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        releaseWriteLock();
+    }
+    public void saveImage2() {
+        try {
+            getWriteLock();
+
+            File path = new File(Environment.getExternalStorageDirectory() + "/Images/");
+            path.mkdirs();
+
+            File file_3 = new File(path, "image2.jpg");
+
+
+            String filename2 = file_3.toString();
+
+
+            ConvertRGBtoGray(matInput.getNativeObjAddr(), matResult.getNativeObjAddr());
+            Imgproc.cvtColor(matResult, matResult, Imgproc.COLOR_BGR2RGBA);
+            ConvertNoise(matResult.getNativeObjAddr(),matResult.getNativeObjAddr(),10);
+            boolean ret2  = Imgcodecs.imwrite( filename2, matResult);
+            if ( ret2 ) Log.d(TAG, "SUCESS2"+filename2);
+            else Log.d(TAG, "FAIL");
+
+
+            Intent mediaScanIntent = new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            mediaScanIntent.setData(Uri.fromFile(file_3));
+            sendBroadcast(mediaScanIntent);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        releaseWriteLock();
+    }
 
     PermissionListener permissionListener = new PermissionListener() {
         @Override

@@ -6,8 +6,8 @@
 6
 7    <uses-sdk
 8        android:minSdkVersion="24"
-8-->/Users/bangjinhyuk/AndroidStudioProjects/NoiseCamera/sdk/java/AndroidManifest.xml
+8-->/Users/bangjinhyuk/Documents/개발/Git/NoiseCamera/NoiseCamera/sdk/java/AndroidManifest.xml
 9        android:targetSdkVersion="30" />
-9-->/Users/bangjinhyuk/AndroidStudioProjects/NoiseCamera/sdk/java/AndroidManifest.xml
+9-->/Users/bangjinhyuk/Documents/개발/Git/NoiseCamera/NoiseCamera/sdk/java/AndroidManifest.xml
 10
 11</manifest>
