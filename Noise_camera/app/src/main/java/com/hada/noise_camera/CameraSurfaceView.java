@@ -60,7 +60,6 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
         parameters.setRotation(90);
         camera.setParameters(parameters);
         Mat noise = new Mat(new Size(parameters.getPictureSize().width,parameters.getPictureSize().width), CvType.CV_16S);
-
         try {
             camera.setPreviewDisplay(holder);
 
