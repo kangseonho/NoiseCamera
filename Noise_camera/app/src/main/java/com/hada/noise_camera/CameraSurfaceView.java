@@ -14,11 +14,14 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.ImageView;
 
+import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
+import org.opencv.core.CvException;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -47,7 +50,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        camera = Camera.open();
+        camera = Camera.open(cameraID);
         Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(cameraID, info);
         if (info.canDisableShutterSound) {
@@ -59,8 +62,24 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
         camera.setDisplayOrientation(90);
         parameters.setRotation(90);
         camera.setParameters(parameters);
+        
         Mat noise = new Mat(new Size(parameters.getPictureSize().width,parameters.getPictureSize().width), CvType.CV_16S);
+
+        OpenCVLoader.initDebug();
+        Size matSize = new Size( parameters.getPictureSize().width,parameters.getPictureSize().height);
+        Mat noise = new Mat(matSize, CvType.CV_8UC1);
+        Matrix matrix = new Matrix();
+        matrix.preRotate(90, 0, 0);
+        Log.d("noise", parameters.getPictureSize().height+""+parameters.getPictureSize().width);
+        Log.d("noise", noise.height()+""+noise.width());
+        Core.randn(noise,0.0, 30.0);
+        Core.rotate(noise,noise,Core.ROTATE_90_CLOCKWISE);
+        Bitmap bmp = Bitmap.createBitmap(parameters.getPictureSize().height,parameters.getPictureSize().width,Bitmap.Config.ARGB_8888);
+        imageView = findViewById(R.id.imageView);
+        imageView.setImageBitmap(convertMatToBitMap(noise));
+
         try {
+
             camera.setPreviewDisplay(holder);
 
         } catch (IOException e) {
@@ -89,7 +108,20 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
             return false;
         }
     }
+    private static Bitmap convertMatToBitMap(Mat input){
+        Bitmap bmp = null;
+        Mat rgb = new Mat();
+        Imgproc.cvtColor(input, rgb, Imgproc.COLOR_BGR2RGB);
 
+        try {
+            bmp = Bitmap.createBitmap(rgb.cols(), rgb.rows(), Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(rgb, bmp);
+        }
+        catch (CvException e){
+            Log.d("Exception",e.getMessage());
+        }
+        return bmp;
+    }
 
     public void setCameraID(int cameraID) {
         this.cameraID = cameraID;
