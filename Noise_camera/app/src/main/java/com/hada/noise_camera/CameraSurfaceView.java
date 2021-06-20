@@ -62,6 +62,8 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
         camera.setDisplayOrientation(90);
         parameters.setRotation(90);
         camera.setParameters(parameters);
+        
+        Mat noise = new Mat(new Size(parameters.getPictureSize().width,parameters.getPictureSize().width), CvType.CV_16S);
 
         OpenCVLoader.initDebug();
         Size matSize = new Size( parameters.getPictureSize().width,parameters.getPictureSize().height);
@@ -75,7 +77,6 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
         Bitmap bmp = Bitmap.createBitmap(parameters.getPictureSize().height,parameters.getPictureSize().width,Bitmap.Config.ARGB_8888);
         imageView = findViewById(R.id.imageView);
         imageView.setImageBitmap(convertMatToBitMap(noise));
-
 
         try {
 
