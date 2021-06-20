@@ -67,7 +67,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
         OpenCVLoader.initDebug();
         Size matSize = new Size( parameters.getPictureSize().width,parameters.getPictureSize().height);
-        Mat noise = new Mat(matSize, CvType.CV_8UC1);
+        //Mat noise = new Mat(matSize, CvType.CV_8UC1);
         Matrix matrix = new Matrix();
         matrix.preRotate(90, 0, 0);
         Log.d("noise", parameters.getPictureSize().height+""+parameters.getPictureSize().width);
