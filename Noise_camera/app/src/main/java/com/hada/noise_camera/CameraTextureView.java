@@ -347,7 +347,7 @@ public class CameraTextureView extends Thread {
             Date date = new Date();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
 
-            final File file = new File(Environment.getExternalStorageDirectory() + "/DCIM", "Camera" + dateFormat.format(date) + ".jpg");
+            final File file = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera/", "Camera" + dateFormat.format(date) + ".jpg");
 
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
@@ -389,7 +389,7 @@ public class CameraTextureView extends Thread {
                         Core.meanStdDev(matInput,mean,dev);
 
             //                Core.randn(noise,mean.get(0,0)[0], dev.get(0,0)[0]);
-                        Core.randn(noise,10.0, 50.0);
+                        Core.randn(noise,-10.0, 100.0);
 
                         Core.add(matInput, noise, matInput);
 
@@ -418,7 +418,7 @@ public class CameraTextureView extends Thread {
                             }
                         });
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        mbmp.compress(Bitmap.CompressFormat.PNG,100,stream);
+                        mbmp.compress(Bitmap.CompressFormat.JPEG,100,stream);
                         byte[] bytes1 = stream.toByteArray();
                         save(bytes1);
 //                        save(bytes);

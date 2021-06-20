@@ -70,7 +70,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
         matrix.preRotate(90, 0, 0);
         Log.d("noise", parameters.getPictureSize().height+""+parameters.getPictureSize().width);
         Log.d("noise", noise.height()+""+noise.width());
-        Core.randn(noise,0.0, 30.0);
+        Core.randn(noise,0.0, 10.0);
         Core.rotate(noise,noise,Core.ROTATE_90_CLOCKWISE);
         Bitmap bmp = Bitmap.createBitmap(parameters.getPictureSize().height,parameters.getPictureSize().width,Bitmap.Config.ARGB_8888);
         imageView = findViewById(R.id.imageView);
