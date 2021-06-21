@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -105,6 +106,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         mPreview.onPause();
+    }
+
+    public void onClickGallery(View view) {
+        Intent gallery = new Intent(getApplicationContext(), GalleryView.class);
+        startActivity(gallery);
     }
 //    CameraSurfaceView surfaceView;
 //    ImageView imageView;
