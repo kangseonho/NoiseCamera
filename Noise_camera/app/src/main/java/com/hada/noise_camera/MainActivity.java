@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mWideAngleButton;
     private Button mCameraCaptureButton;
     private Button mCameraDirectionButton;
-    private ImageView imageView;
+    private ImageView grid, noiseimg;
 
     Activity mainActivity = this;
 
@@ -67,9 +67,13 @@ public class MainActivity extends AppCompatActivity {
         mCameraCaptureButton = (Button) findViewById(R.id.bt_shutter);
         mCameraDirectionButton = (Button) findViewById(R.id.camera_front_back);
         mCameraTextureView = (TextureView) findViewById(R.id.cameraTextureView);
+        noiseimg = (ImageView) findViewById(R.id.noiseimg);
+        grid = (ImageView) findViewById(R.id.grid);
+        //화면의 가로 길이를구하여 세로길이를 4대3 비율로 정해줌
         mCameraTextureView.getLayoutParams().height= width*4/3;
-        imageView = (ImageView) findViewById(R.id.imageView);
-        mPreview = new CameraTextureView(this, mCameraTextureView, mNormalAngleButton, mWideAngleButton, mCameraCaptureButton, mCameraDirectionButton,imageView,mainActivity);
+        noiseimg.getLayoutParams().height= width*4/3;
+        grid.getLayoutParams().height= width*4/3;
+        mPreview = new CameraTextureView(this, mCameraTextureView, mNormalAngleButton, mWideAngleButton, mCameraCaptureButton, mCameraDirectionButton,noiseimg,mainActivity);
     }
 
     @Override
@@ -83,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
                     if (permission.equals(Manifest.permission.CAMERA)) {
                         if (grantResult == PackageManager.PERMISSION_GRANTED) {
                             mCameraTextureView = (TextureView) findViewById(R.id.cameraTextureView);
-                            mPreview = new CameraTextureView(mainActivity, mCameraTextureView, mNormalAngleButton, mWideAngleButton, mCameraCaptureButton, mCameraDirectionButton,imageView,mainActivity);
+                            mPreview = new CameraTextureView(mainActivity, mCameraTextureView, mNormalAngleButton, mWideAngleButton, mCameraCaptureButton, mCameraDirectionButton,noiseimg,mainActivity);
                             mPreview.openCamera();
                             Log.d(TAG, "mPreview set");
                         } else {

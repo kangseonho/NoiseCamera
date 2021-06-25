@@ -75,7 +75,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
         Core.randn(noise,0.0, 10.0);
         Core.rotate(noise,noise,Core.ROTATE_90_CLOCKWISE);
         Bitmap bmp = Bitmap.createBitmap(parameters.getPictureSize().height,parameters.getPictureSize().width,Bitmap.Config.ARGB_8888);
-        imageView = findViewById(R.id.imageView);
+        imageView = findViewById(R.id.noiseimg);
         imageView.setImageBitmap(convertMatToBitMap(noise));
 
         try {

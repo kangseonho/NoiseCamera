@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
@@ -45,8 +46,10 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -60,7 +63,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-public class CameraTextureView extends Thread {
+public class  CameraTextureView extends Thread {
     private final static String TAG = "CameraTextureView : ";
 
     private Size mPreviewSize;
@@ -75,7 +78,7 @@ public class CameraTextureView extends Thread {
     private Button mCameraCaptureButton;
     private Button mCameraDirectionButton;
     private Mat matInput;
-    private ImageView imageView;
+    private ImageView noise_img;
     private Activity mainActivity;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray(4);
 
@@ -86,10 +89,10 @@ public class CameraTextureView extends Thread {
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
 
-    public CameraTextureView(Context context, TextureView textureView, Button button1, Button button2, Button button3, Button button4,ImageView image_View,Activity getmainActivity) {
+    public CameraTextureView(Context context, TextureView textureView, Button button1, Button button2, Button button3, Button button4,ImageView noiseimg,Activity getmainActivity) {
         mContext = context;
         mTextureView = textureView;
-        imageView = image_View;
+        noise_img = noiseimg;
         mainActivity = getmainActivity;
         mNormalAngleButton = button1;
         mWideAngleButton = button2;
@@ -355,6 +358,8 @@ public class CameraTextureView extends Thread {
                     Image image = null;
                     try {
                         image = reader.acquireLatestImage();
+//                        Bitmap bmp = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img1766);
+
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                         byte[] bytes = new byte[buffer.capacity()];
                         Log.d("bytelength", bytes.length+"");
@@ -389,12 +394,14 @@ public class CameraTextureView extends Thread {
                         Core.meanStdDev(matInput,mean,dev);
 
             //                Core.randn(noise,mean.get(0,0)[0], dev.get(0,0)[0]);
-                        Core.randn(noise,-10.0, 100.0);
+                        Core.randn(noise,0.0, 120.0);
 
                         Core.add(matInput, noise, matInput);
 
                         Utils.matToBitmap(matInput,bmp);
                         Core.rotate(matInput,matInput,Core.ROTATE_90_CLOCKWISE);
+
+
                         // 이미지 중심으로 90도 회전 Matrix
                         Matrix matrix = new Matrix();
                         matrix.preRotate(90, 0, 0);
@@ -406,6 +413,7 @@ public class CameraTextureView extends Thread {
                         Core.rotate(noise,noise,Core.ROTATE_90_CLOCKWISE);
 
 
+
                         Bitmap noisebmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, false);
                         Utils.matToBitmap(noise,noisebmp);
 
@@ -414,7 +422,7 @@ public class CameraTextureView extends Thread {
                             public void run() {
                                 Log.d("please", "run");
 //                                imageView.setImageBitmap(bmp);
-                                imageView.setImageBitmap(noisebmp);
+                                noise_img.setImageBitmap(noisebmp);
                             }
                         });
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
