@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -27,6 +28,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -43,8 +45,10 @@ import androidx.core.content.ContextCompat;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
+import org.opencv.core.Scalar;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -123,7 +127,7 @@ public class  CameraTextureView extends Thread {
 
             @Override
             public void onClick(View v) {
-                takePicture();
+                takePicture(1);
             }
         });
 
@@ -187,8 +191,12 @@ public class  CameraTextureView extends Thread {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             // TODO Auto-generated method stub
-            Log.e(TAG, "onSurfaceTextureAvailable, width=" + width + ", height=" + height);
+            DisplayMetrics outMetrics = new DisplayMetrics();
+            mainActivity.getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
+            int px = outMetrics.densityDpi;
+            Log.e(TAG, "onSurfaceTextureAvailable, width=" + width + ", height=" + height + ", density=" + px);
             openCamera();
+
         }
 
         @Override
@@ -218,6 +226,7 @@ public class  CameraTextureView extends Thread {
             Log.e(TAG, "onOpened");
             mCameraDevice = camera;
             startPreview();
+
         }
 
         @Override
@@ -277,6 +286,7 @@ public class  CameraTextureView extends Thread {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
     }
 
     protected void updatePreview() {
@@ -302,10 +312,11 @@ public class  CameraTextureView extends Thread {
         @Override
         public void run() {
             startPreview();
+
         }
     };
 
-    protected void takePicture() {
+    protected void takePicture(int type) {
         if (null == mCameraDevice) {
             Log.e(TAG, "mCameraDevice is null, return");
             return;
@@ -377,14 +388,16 @@ public class  CameraTextureView extends Thread {
                         Log.d("bytelength", bmp.getWidth()+""+bmp.getHeight());
 
 
-
+//                        Bitmap resized_bmp =  resizeBitmap(bmp,mTextureView.getHeight(),mTextureView.getWidth());
 //                        imageView.setImageBitmap(bmp);
                         matInput = new Mat();
-                        Utils.bitmapToMat(bmp,matInput);
+//
 
+                        Utils.bitmapToMat(bmp, matInput);
+
+//
 
                         Mat noise = new Mat(matInput.size(), matInput.type());
-
                         Log.d("data.lengthSize", bytes.length+""+matInput.type());
                         Log.d("Bitmap.lengthSize", bmp.getWidth()+""+bmp.getHeight());
                         Log.d("matInputSize", matInput.size()+"");
@@ -394,7 +407,7 @@ public class  CameraTextureView extends Thread {
                         Core.meanStdDev(matInput,mean,dev);
 
             //                Core.randn(noise,mean.get(0,0)[0], dev.get(0,0)[0]);
-                        Core.randn(noise,0.0, 120.0);
+                        Core.randn(noise,0.0, 60.0);
 
                         Core.add(matInput, noise, matInput);
 
@@ -417,20 +430,21 @@ public class  CameraTextureView extends Thread {
                         Bitmap noisebmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, false);
                         Utils.matToBitmap(noise,noisebmp);
 
-                        mainActivity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.d("please", "run");
-//                                imageView.setImageBitmap(bmp);
-                                noise_img.setImageBitmap(noisebmp);
-                            }
-                        });
+//                        mainActivity.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Log.d("please", "run");
+////                                imageView.setImageBitmap(bmp);
+//                                noise_img.setImageBitmap(noisebmp);
+//                            }
+//                        });
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        mbmp.compress(Bitmap.CompressFormat.JPEG,100,stream);
+                        mbmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                         byte[] bytes1 = stream.toByteArray();
                         save(bytes1);
-//                        save(bytes);
+                        //                        save(bytes);
                         Log.d(TAG, "save()");
+
                     }
                     catch (FileNotFoundException e) {
                         e.printStackTrace();
@@ -476,6 +490,8 @@ public class  CameraTextureView extends Thread {
 
             };
 
+
+
             mCameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(CameraCaptureSession session) {
@@ -504,6 +520,8 @@ public class  CameraTextureView extends Thread {
     public void onResume() {
         Log.d(TAG, "onResume");
         setSurfaceTextureListener();
+        openCamera();
+
     }
 
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
@@ -524,6 +542,15 @@ public class  CameraTextureView extends Thread {
             mCameraOpenCloseLock.release();
         }
     }
+
+//    static public Bitmap resizeBitmap(Bitmap original, int width, int height) {
+//
+//        Bitmap result = Bitmap.createScaledBitmap(original, width, height, false);
+//        if (result != original) {
+//            original.recycle();
+//        }
+//        return result;
+//    }
 
 }
 

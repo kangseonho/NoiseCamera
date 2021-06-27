@@ -32,6 +32,7 @@ import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDouble;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mCameraCaptureButton;
     private Button mCameraDirectionButton;
     private ImageView grid, noiseimg;
-
+    private Mat matInput;
     Activity mainActivity = this;
 
     private static final String TAG = "MAINACTIVITY";
@@ -73,6 +74,28 @@ public class MainActivity extends AppCompatActivity {
         mCameraTextureView.getLayoutParams().height= width*4/3;
         noiseimg.getLayoutParams().height= width*4/3;
         grid.getLayoutParams().height= width*4/3;
+
+        Log.d("width", "onCreate: "+ width+","+ width*4/3);
+        //초반 앱을 켤때에 노이즈 필터 적용
+        OpenCVLoader.initDebug();
+        Bitmap bmp5120 = BitmapFactory.decodeResource(this.getResources(), R.drawable.img_5120);
+        Log.d("width", "onCreate: "+ bmp5120.getWidth()+","+ bmp5120.getHeight());
+
+        Bitmap resized = Bitmap.createScaledBitmap(bmp5120,width, width*4/3, true);
+        matInput = new Mat();
+        Utils.bitmapToMat(resized, matInput);
+        Mat noise = new Mat(matInput.size(), matInput.type());
+
+
+        MatOfDouble mean = new MatOfDouble ();
+        MatOfDouble dev = new MatOfDouble ();
+        Core.meanStdDev(matInput,mean,dev);
+        Core.randn(noise,0.0, 60.0);
+        Matrix matrix = new Matrix();
+        Bitmap noisebmp = Bitmap.createBitmap(resized, 0, 0, resized.getWidth(), resized.getHeight(), matrix, false);
+        Utils.matToBitmap(noise,noisebmp);
+        noiseimg.setImageBitmap(noisebmp);
+
         mPreview = new CameraTextureView(this, mCameraTextureView, mNormalAngleButton, mWideAngleButton, mCameraCaptureButton, mCameraDirectionButton,noiseimg,mainActivity);
     }
 
