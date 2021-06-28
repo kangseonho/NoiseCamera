@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,6 +34,7 @@ public class SelectGalleryView extends AppCompatActivity {
     private ArrayList<Integer> ids = new ArrayList<>();
     private ImageView currentImage;
     private TextView textView;
+    private Button cancleButton;
     private final int DELETE_PERMISSION_REQUEST = 0x1033;
 
     @Override
@@ -48,30 +50,38 @@ public class SelectGalleryView extends AppCompatActivity {
         currentImage = (ImageView)findViewById(R.id.currentImage);
         currentImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
         Glide.with(this).load(urls.get(currentPosition)).into(currentImage);
-    }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void CancleButton(View view) throws IntentSender.SendIntentException {
-        System.out.println(ids.size());
-        try {
-            Uri contentUri = Uri.withAppendedPath(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    ids.get(currentPosition).toString()
-            );
-            ContentResolver contentResolver = getContentResolver();
-            contentResolver.delete(contentUri,null,null);
-        } catch (RecoverableSecurityException e) {
-           IntentSender intentSender = e.getUserAction().getActionIntent().getIntentSender();
-           startIntentSenderForResult(intentSender, DELETE_PERMISSION_REQUEST,null,0,0,0,null);
-        }
-        getAllPhotos();
-        currentImage = (ImageView)findViewById(R.id.currentImage);
-        currentImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        Glide.with(this).load(urls.get(currentPosition)).into(currentImage);
+        cancleButton = (Button)findViewById(R.id.cancelButton);
+        cancleButton.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            @Override
+            public void onClick(View v) {
+                try {
+                    Uri contentUri = Uri.withAppendedPath(
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                            ids.get(currentPosition).toString()
+                    );
+                    ContentResolver contentResolver = getContentResolver();
+                    contentResolver.delete(contentUri,null,null);
+                } catch (RecoverableSecurityException e) {
+                    IntentSender intentSender = e.getUserAction().getActionIntent().getIntentSender();
+                    try {
+                        startIntentSenderForResult(intentSender, DELETE_PERMISSION_REQUEST,null,0,0,0,null);
+                    } catch (IntentSender.SendIntentException sendIntentException) {
+                        sendIntentException.printStackTrace();
+                    }
+                }
+                getAllPhotos();
+                currentImage = (ImageView)findViewById(R.id.currentImage);
+                currentImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                Glide.with(getApplicationContext()).load(urls.get(currentPosition)).into(currentImage);
+            }
+        });
     }
 
     private void getAllPhotos() {
         urls.clear();
+        ids.clear();
         String[] projection = new String[]{
                 MediaStore.Images.ImageColumns._ID,
                 MediaStore.Images.ImageColumns.DATA,
@@ -95,9 +105,19 @@ public class SelectGalleryView extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Activity.RESULT_OK && requestCode == DELETE_PERMISSION_REQUEST) {
+        if (resultCode == Activity.RESULT_OK && requestCode == DELETE_PERMISSION_REQUEST) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                
+                Uri contentUri = Uri.withAppendedPath(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        ids.get(currentPosition).toString()
+                );
+                ContentResolver contentResolver = getContentResolver();
+                contentResolver.delete(contentUri,null,null);
+
+                getAllPhotos();
+                currentImage = (ImageView)findViewById(R.id.currentImage);
+                currentImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                Glide.with(this).load(urls.get(currentPosition)).into(currentImage);
             }
         }
     }
