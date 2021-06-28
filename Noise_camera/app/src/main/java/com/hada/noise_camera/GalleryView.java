@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.GridView;
 
 import java.io.File;
@@ -39,6 +41,14 @@ public class GalleryView extends AppCompatActivity {
 
 
         mAdapter = new CustomAdapter(this,urls);
+        mAdapter.setOnItemClickListener(new CustomAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+                Intent intent = new Intent(getApplicationContext(), SelectGalleryView.class);
+                intent.putExtra("position",position);
+                startActivity(intent);
+            }
+        });
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addItemDecoration(dividerItemDecoration);
@@ -49,7 +59,7 @@ public class GalleryView extends AppCompatActivity {
         String[] projection = new String[]{
                 MediaStore.Images.ImageColumns._ID,
                 MediaStore.Images.ImageColumns.DATA,
-                MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME, //the album it in
+                MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME,
                 MediaStore.Images.ImageColumns.DATE_TAKEN,
                 MediaStore.Images.ImageColumns.MIME_TYPE
         };
@@ -64,5 +74,11 @@ public class GalleryView extends AppCompatActivity {
             }
             cursor.close();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+        startActivity(intent);
     }
 }

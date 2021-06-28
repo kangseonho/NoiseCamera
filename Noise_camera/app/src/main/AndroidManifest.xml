@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Noise_camera">
-        <activity android:name=".GalleryView"></activity>
+        <activity android:name=".SelectGalleryView"></activity>
+        <activity android:name=".GalleryView" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -16,9 +17,18 @@ import com.bumptech.glide.Glide;
 import java.io.File;
 import java.util.ArrayList;
 
-public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder> {
+public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>{
     ArrayList<String> items = new ArrayList<String>();
     Context mContext;
+    private OnItemClickListener mListener = null;
+
+    public interface OnItemClickListener {
+        void onItemClick(View v, int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.mListener = listener;
+    }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder {
         protected ImageView iv;
@@ -26,6 +36,19 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
         public CustomViewHolder(View view) {
             super(view);
             this.iv = (ImageView) view.findViewById(R.id.id_listitem);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+
+                    if(position != RecyclerView.NO_POSITION) {
+                        if(mListener != null){
+                            mListener.onItemClick(v,position);
+                        }
+                    }
+                }
+            });
         }
     }
 
