@@ -369,7 +369,12 @@ public class  CameraTextureView extends Thread {
                     Image image = null;
                     try {
                         image = reader.acquireLatestImage();
-//                        Bitmap bmp = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img1766);
+
+//                        Bitmap bmp = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.img_1847);
+//                        ByteArrayOutputStream stream1 = new ByteArrayOutputStream();
+//                        bmp.compress(Bitmap.CompressFormat.JPEG,40, stream1);
+//                        byte[] byteArray = stream1.toByteArray();
+//                        bmp = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
 
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                         byte[] bytes = new byte[buffer.capacity()];
@@ -383,7 +388,9 @@ public class  CameraTextureView extends Thread {
 //                        ByteBuffer bmpbuffer = ByteBuffer.wrap(bytes);
 //                        bmpbuffer.rewind();
 //                        bmp.copyPixelsFromBuffer(bmpbuffer);
+
                         Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
 //                        imageView.setImageBitmap(bitmapps);
                         Log.d("bytelength", bmp.getWidth()+""+bmp.getHeight());
 
@@ -406,8 +413,8 @@ public class  CameraTextureView extends Thread {
                         MatOfDouble dev = new MatOfDouble ();
                         Core.meanStdDev(matInput,mean,dev);
 
-            //                Core.randn(noise,mean.get(0,0)[0], dev.get(0,0)[0]);
-                        Core.randn(noise,0.0, 60.0);
+//                        Core.randn(noise,mean.get(0,0)[0], dev.get(0,0)[0]);
+                        Core.randn(noise,0.0, 185.0);
 
                         Core.add(matInput, noise, matInput);
 

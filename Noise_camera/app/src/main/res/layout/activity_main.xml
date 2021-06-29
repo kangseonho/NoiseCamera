@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context=".MainActivity">
 
 <!--    <com.hada.noise_camera.CameraSurfaceView-->
@@ -26,7 +27,17 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.16"/>
+        app:layout_constraintVertical_bias="0.16000003" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/title"
+        android:layout_width="307dp"
+        android:layout_height="29dp"
+        android:background="@drawable/noisecam"
+        app:layout_constraintBottom_toTopOf="@+id/cameraTextureView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <ImageView
@@ -46,12 +57,11 @@
         android:layout_height="wrap_content"
         android:src="@drawable/grid"
         app:layout_constraintBottom_toBottomOf="@+id/cameraTextureView"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/cameraTextureView" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/bt_shutter"
         android:layout_width="85dp"
         android:layout_height="85dp"
@@ -59,30 +69,28 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.94" />
+        app:layout_constraintTop_toBottomOf="@+id/cameraTextureView" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/camera_front_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="전면/후면"
+        android:layout_width="52dp"
+        android:layout_height="98dp"
+        android:background="@drawable/camera_switch"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintHorizontal_bias="0.9"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.929" />
+        app:layout_constraintTop_toBottomOf="@+id/cameraTextureView" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/bt_gallery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:text="갤러리 불러오기"
         android:onClick="onClickGallery"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/bt_shutter"
-        app:layout_constraintHorizontal_bias="0.56"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cameraTextureView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
