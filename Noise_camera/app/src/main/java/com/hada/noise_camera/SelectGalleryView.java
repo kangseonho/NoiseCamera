@@ -48,8 +48,8 @@ public class SelectGalleryView extends AppCompatActivity {
         textView = (TextView)findViewById(R.id.count);
         textView.setText((currentPosition+1)+"/"+urls.size());
         currentImage = (ImageView)findViewById(R.id.currentImage);
-        currentImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        Glide.with(this).load(urls.get(currentPosition)).into(currentImage);
+        currentImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        Glide.with(this).load(urls.get(currentPosition)).fitCenter().into(currentImage);
 
         cancleButton = (Button)findViewById(R.id.cancelButton);
         cancleButton.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +73,7 @@ public class SelectGalleryView extends AppCompatActivity {
                 }
                 getAllPhotos();
                 currentImage = (ImageView)findViewById(R.id.currentImage);
-                currentImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                currentImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 Glide.with(getApplicationContext()).load(urls.get(currentPosition)).into(currentImage);
             }
         });

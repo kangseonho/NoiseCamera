@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         MatOfDouble mean = new MatOfDouble ();
         MatOfDouble dev = new MatOfDouble ();
         Core.meanStdDev(matInput,mean,dev);
-        Core.randn(noise,0.0, 40.0);
+        Core.randn(noise,0.0, 35.0);
         Matrix matrix = new Matrix();
         Bitmap noisebmp = Bitmap.createBitmap(resized, 0, 0, resized.getWidth(), resized.getHeight(), matrix, false);
         Utils.matToBitmap(noise,noisebmp);

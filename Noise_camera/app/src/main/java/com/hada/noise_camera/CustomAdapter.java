@@ -13,7 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -70,8 +72,11 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomView
     public void onBindViewHolder(@NonNull CustomViewHolder viewHolder, int position) {
         viewHolder.iv.setPadding(2,2,2,2);
         viewHolder.iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        Glide.with(mContext).load(items.get(position)).into(viewHolder.iv);
+        RequestOptions myOptions = new RequestOptions()
+                .centerCrop();
+        Glide.with(mContext).asBitmap().apply(myOptions).load(items.get(position)).into(viewHolder.iv);
     }
+
 
     @Override
     public int getItemCount(){

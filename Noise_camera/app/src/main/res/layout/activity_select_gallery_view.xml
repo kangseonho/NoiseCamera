@@ -56,7 +56,8 @@
         <ImageView
             android:id="@+id/currentImage"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
