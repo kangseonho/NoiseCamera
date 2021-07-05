@@ -175,5 +175,6 @@ public class SelectGalleryView extends AppCompatActivity {
     public void onBackPressed() {
         Intent intent = new Intent(getApplicationContext(),GalleryView.class);
         startActivity(intent);
+
     }
 }

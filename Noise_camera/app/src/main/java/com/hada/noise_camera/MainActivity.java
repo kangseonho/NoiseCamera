@@ -54,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
     private Mat matInput;
     Activity mainActivity = this;
     private int width,height;
+    private long backKeyPressedTime = 0;
+    private Toast toast;
+
     private static final String TAG = "MAINACTIVITY";
 
     static final int REQUEST_CAMERA = 1;
@@ -345,4 +348,10 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "권한이 거부됨",Toast.LENGTH_SHORT).show();
         }
     };
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        moveTaskToBack(true);
+        finishAndRemoveTask();
+    }
 }
