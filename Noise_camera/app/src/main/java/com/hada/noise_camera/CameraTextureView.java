@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
@@ -28,6 +29,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Size;
@@ -82,8 +84,9 @@ public class  CameraTextureView extends Thread {
     private Button mCameraCaptureButton;
     private Button mCameraDirectionButton;
     private Mat matInput;
-    private ImageView noise_img;
+    private ImageView noise_img,bt_gallery;
     private Activity mainActivity;
+    private int width;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray(4);
 
     static {
@@ -93,7 +96,7 @@ public class  CameraTextureView extends Thread {
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
 
-    public CameraTextureView(Context context, TextureView textureView, Button button1, Button button2, Button button3, Button button4,ImageView noiseimg,Activity getmainActivity) {
+    public CameraTextureView(Context context, TextureView textureView, Button button1, Button button2, Button button3, Button button4,ImageView noiseimg,Activity getmainActivity,int getwidth,ImageView btgallery) {
         mContext = context;
         mTextureView = textureView;
         noise_img = noiseimg;
@@ -102,7 +105,8 @@ public class  CameraTextureView extends Thread {
         mWideAngleButton = button2;
         mCameraCaptureButton = button3;
         mCameraDirectionButton = button4;
-
+        width = getwidth;
+        bt_gallery = btgallery;
 //        mNormalAngleButton.setOnClickListener(new View.OnClickListener() {
 //
 //            @Override
@@ -471,6 +475,7 @@ public class  CameraTextureView extends Thread {
                     try {
                         output = new FileOutputStream(file);
                         output.write(bytes);
+                        setRecentImageView();
                     } finally {
                         if (null != output) {
                             output.close();
@@ -520,6 +525,42 @@ public class  CameraTextureView extends Thread {
         }
     }
 
+    public void setRecentImageView(){
+        //최신 사진 가져오는 부분
+        String[] projection = new String[]{
+                MediaStore.Images.ImageColumns._ID,
+                MediaStore.Images.ImageColumns.DATA,
+                MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME, //the album it in
+                MediaStore.Images.ImageColumns.DATE_TAKEN,
+                MediaStore.Images.ImageColumns.MIME_TYPE
+        };
+        final Cursor cursor = mainActivity.getApplicationContext().getContentResolver()
+                .query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null,
+                        null, MediaStore.Images.ImageColumns.DATE_ADDED + " DESC");
+
+        if (cursor.moveToFirst()) {
+            String imageLocation = cursor.getString(1);
+            File imageFile = new File(imageLocation);
+            if (imageFile.exists()) {   // TODO: is there a better way to do this?
+
+                Bitmap image = BitmapFactory.decodeFile(imageLocation);//loading the large bitmap is fine.
+                int w = image.getWidth();//get width
+                int h = image.getHeight();//get height
+                int aspRat = w / h;//get aspect ratio
+                int W = width*15/100;//do whatever you want with width. Fixed, screen size, anything
+                int H;
+                if (aspRat>0) {
+                    H = W * aspRat;//set the height based on width and aspect ratio
+                }else {
+                    H = W;
+                }
+                Log.d(TAG, "onCreate: width"+width+""+aspRat);
+                Bitmap b = Bitmap.createScaledBitmap(image, W, H, false);//scale the bitmap
+                bt_gallery.setImageBitmap(b);//set the image view
+                image.recycle();//save memory on the bitmap called 'image'
+            }
+        }
+    }
     public void setSurfaceTextureListener() {
         mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
     }

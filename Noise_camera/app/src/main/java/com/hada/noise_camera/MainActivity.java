@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView grid, noiseimg, title, bt_gallery;
     private Mat matInput;
     Activity mainActivity = this;
-
+    private int width,height;
     private static final String TAG = "MAINACTIVITY";
 
     static final int REQUEST_CAMERA = 1;
@@ -64,8 +64,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Display display = getWindowManager().getDefaultDisplay();
 
-        int width = display.getWidth();
-        int height = display.getHeight();
+        width = display.getWidth();
+        height = display.getHeight();
 
         Log.d("width", "onCreate: "+width);
 
@@ -117,6 +117,10 @@ public class MainActivity extends AppCompatActivity {
         Utils.matToBitmap(noise,noisebmp);
         noiseimg.setImageBitmap(noisebmp);
         bmp5120.recycle();
+        setRecentImageView();
+        mPreview = new CameraTextureView(this, mCameraTextureView, mNormalAngleButton, mWideAngleButton, mCameraCaptureButton, mCameraDirectionButton,noiseimg,mainActivity,width,bt_gallery);
+    }
+    public void setRecentImageView(){
         //최신 사진 가져오는 부분
         String[] projection = new String[]{
                 MediaStore.Images.ImageColumns._ID,
@@ -151,9 +155,7 @@ public class MainActivity extends AppCompatActivity {
                 image.recycle();//save memory on the bitmap called 'image'
             }
         }
-        mPreview = new CameraTextureView(this, mCameraTextureView, mNormalAngleButton, mWideAngleButton, mCameraCaptureButton, mCameraDirectionButton,noiseimg,mainActivity);
     }
-
     private Bitmap compressBitmap(Bitmap bitmap){
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG,40, stream);
@@ -173,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                     if (permission.equals(Manifest.permission.CAMERA)) {
                         if (grantResult == PackageManager.PERMISSION_GRANTED) {
                             mCameraTextureView = (TextureView) findViewById(R.id.cameraTextureView);
-                            mPreview = new CameraTextureView(mainActivity, mCameraTextureView, mNormalAngleButton, mWideAngleButton, mCameraCaptureButton, mCameraDirectionButton,noiseimg,mainActivity);
+                            mPreview = new CameraTextureView(this, mCameraTextureView, mNormalAngleButton, mWideAngleButton, mCameraCaptureButton, mCameraDirectionButton,noiseimg,mainActivity,width,bt_gallery);
                             mPreview.openCamera();
                             Log.d(TAG, "mPreview set");
                         } else {
