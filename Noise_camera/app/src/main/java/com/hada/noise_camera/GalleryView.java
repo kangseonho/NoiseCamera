@@ -1,6 +1,7 @@
     package com.hada.noise_camera;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -14,8 +15,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.view.Display;
 import android.view.View;
 import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import java.io.File;
 import java.net.URL;
@@ -30,9 +34,32 @@ public class GalleryView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery_view);
 
+        Display display = getWindowManager().getDefaultDisplay();
+
+        int width = display.getWidth();
+        int height = display.getHeight();
+
         getAllPhotos();
 
         RecyclerView mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        ImageView mRencently = (ImageView) findViewById(R.id.recently_gallery);
+        ImageButton mXButton = (ImageButton) findViewById(R.id.gallery_x_button);
+
+        ConstraintLayout.LayoutParams mLayoutParams = (ConstraintLayout.LayoutParams) mRecyclerView.getLayoutParams();
+        mLayoutParams.topMargin = height * 5 /100;
+        mRecyclerView.setLayoutParams(mLayoutParams);
+
+        ConstraintLayout.LayoutParams cl = (ConstraintLayout.LayoutParams) mXButton.getLayoutParams();
+        cl.leftMargin = width * 7 / 100;
+        mXButton.setLayoutParams(cl);
+
+        mRecyclerView.getLayoutParams().height = height * 95/100;
+        mRencently.getLayoutParams().width = width * 15/100;
+        mRencently.getLayoutParams().height = width * 3/100;
+        mXButton.getLayoutParams().height = width * 4/100;
+        mXButton.getLayoutParams().width = width * 4/100;
+
+
         GridLayoutManager mGridLayoutManager = new GridLayoutManager(this,3);
         RecyclerView.ItemDecoration dividerItemDecoration =
                 new DividerItemDecorator(ContextCompat.getDrawable(this,R.drawable.divider));
@@ -52,7 +79,6 @@ public class GalleryView extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addItemDecoration(dividerItemDecoration);
-
     }
 
     private void getAllPhotos() {
@@ -74,6 +100,11 @@ public class GalleryView extends AppCompatActivity {
             }
             cursor.close();
         }
+    }
+
+    public void onClickBackButton(View view) {
+        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+        startActivity(intent);
     }
 
     @Override

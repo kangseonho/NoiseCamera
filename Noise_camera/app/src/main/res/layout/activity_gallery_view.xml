@@ -7,15 +7,36 @@
     android:background="@color/black"
     tools:context=".GalleryView">
 
+    <ImageButton
+        android:id="@+id/gallery_x_button"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:background="@drawable/gallery_x_button"
+        android:scaleType="centerCrop"
+        android:onClick="onClickBackButton"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/recently_gallery"
+        android:layout_width="85dp"
+        android:layout_height="21dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/gallery_recently"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="693dp"
+        android:layout_height="690dp"
+        android:layout_marginTop="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

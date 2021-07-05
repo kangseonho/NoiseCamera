@@ -3,6 +3,7 @@ package com.hada.noise_camera;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
 
 import android.app.Activity;
@@ -12,13 +13,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -34,7 +40,10 @@ public class SelectGalleryView extends AppCompatActivity {
     private ArrayList<Integer> ids = new ArrayList<>();
     private ImageView currentImage;
     private TextView textView;
-    private Button cancleButton;
+    private ImageButton cancleButton;
+    private ImageButton returnButton;
+    private ImageView bigWord;
+    private LinearLayout linearLayout;
     private final int DELETE_PERMISSION_REQUEST = 0x1033;
 
     @Override
@@ -45,13 +54,53 @@ public class SelectGalleryView extends AppCompatActivity {
         currentPosition = bundle.getInt("position");
         getAllPhotos();
 
+        Display display = getWindowManager().getDefaultDisplay();
+
+        int width = display.getWidth();
+        int height = display.getHeight();
+
+
         textView = (TextView)findViewById(R.id.count);
-        textView.setText((currentPosition+1)+"/"+urls.size());
         currentImage = (ImageView)findViewById(R.id.currentImage);
-        currentImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        currentImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        linearLayout = (LinearLayout)findViewById(R.id.linearLayout);
+        returnButton = (ImageButton) findViewById(R.id.return_button);
+        cancleButton = (ImageButton) findViewById(R.id.cancelButton);
+        bigWord = (ImageView)findViewById(R.id.big_word);
+
+        ConstraintLayout.LayoutParams mLayoutParams = (ConstraintLayout.LayoutParams) linearLayout.getLayoutParams();
+        mLayoutParams.topMargin = height * 5 /100;
+        mLayoutParams.bottomMargin = height * 15/100;
+        linearLayout.setLayoutParams(mLayoutParams);
+
+        ConstraintLayout.LayoutParams cl = (ConstraintLayout.LayoutParams) returnButton.getLayoutParams();
+        cl.leftMargin = width * 4 / 100;
+        returnButton.setLayoutParams(cl);
+
+        ConstraintLayout.LayoutParams cl2 = (ConstraintLayout.LayoutParams) cancleButton.getLayoutParams();
+        cl2.rightMargin = width * 4 / 100;
+        cancleButton.setLayoutParams(cl2);
+
+        returnButton.getLayoutParams().height = height * 2/100;
+        returnButton.getLayoutParams().width = width * 2/100;
+        cancleButton.getLayoutParams().height = (int)(height * 2.5/100);
+        cancleButton.getLayoutParams().width = (int) (width * 4.5/100);
+        bigWord.getLayoutParams().height = height * 3/100;
+        bigWord.getLayoutParams().width = width * 30/100;
+        textView.getLayoutParams().height = height * 3/100;
+        textView.getLayoutParams().width = width * 25/100;
+        textView.setText((currentPosition+1)+"/"+urls.size());
+
         Glide.with(this).load(urls.get(currentPosition)).fitCenter().into(currentImage);
 
-        cancleButton = (Button)findViewById(R.id.cancelButton);
+        returnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),GalleryView.class);
+                startActivity(intent);
+            }
+        });
+
         cancleButton.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
@@ -73,7 +122,7 @@ public class SelectGalleryView extends AppCompatActivity {
                 }
                 getAllPhotos();
                 currentImage = (ImageView)findViewById(R.id.currentImage);
-                currentImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                currentImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 Glide.with(getApplicationContext()).load(urls.get(currentPosition)).into(currentImage);
             }
         });
